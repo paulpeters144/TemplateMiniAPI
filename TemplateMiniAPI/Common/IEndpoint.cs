@@ -1,4 +1,4 @@
-﻿namespace TemplateMiniAPI.Endpoints;
+namespace TemplateMiniAPI.Common;
 
 public interface IEndpoint
 {
