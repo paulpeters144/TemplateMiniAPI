@@ -38,35 +38,30 @@ public class WeatherController
     public IResult GetWeather(IConfiguration config)
     {
         var test = config.GetValue<string>("key");
-        var weatherResult = getWeather();
-        if (weatherResult.DidError)
+        try
+        {
+            return TypedResults.Ok(getWeather());
+        }
+        catch (Exception)
         {
             return TypedResults.StatusCode(500);
         }
-        return TypedResults.Ok(weatherResult.Value);
     }
 
-    private TResult<WeatherForecast[]> getWeather()
+    private WeatherForecast[] getWeather()
     {
-        try
+        var summaries = new[]
         {
-            var summaries = new[]
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+        var forecast = Enumerable.Range(1, 5).Select(index =>
+            new WeatherForecast
             {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-            var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                {
-                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    TemperatureC = Random.Shared.Next(-20, 55),
-                    Summary = summaries[Random.Shared.Next(summaries.Length)]
-                });
-            return forecast.ToArray();
-        }
-        catch (Exception ex)
-        {
-            return Error.Exception(ex);
-        }
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = summaries[Random.Shared.Next(summaries.Length)]
+            });
+        return forecast.ToArray();
     }
 }
 
